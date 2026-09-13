@@ -1,0 +1,37 @@
+# Copyright © 2026 Vladimir Uvarov. All rights reserved.
+# SwiftLint 0.65.1. swift-format owns indentation/wrapping; lint enforces structure and safety.
+included:
+  - ApexArchive
+  - Packages/ArchiveKit/Sources
+  - Packages/ArchiveKit/Tests
+  - Packages/ArchiveKit/Tools
+excluded:
+  - Packages/ArchiveKit/.build
+  - .build
+  - build
+only_rules:
+  - colon
+  - comma
+  - trailing_whitespace
+  - trailing_newline
+  - vertical_whitespace
+  - closing_brace
+  - return_arrow_whitespace
+  - statement_position
+  - force_cast
+  - force_try
+  - force_unwrapping
+  - type_name
+  - file_types_order
+  - file_name
+  - custom_rules
+file_name:
+  excluded: []
+  prefix_pattern: ""
+  suffix_pattern: ""
+custom_rules:
+  blank_line_between_members:
+    name: "Separate declarations with a blank line"
+    regex: '\}\n[ \t]*(?:(?:public|private|internal|fileprivate|static|final|override|class|mutating|nonmutating) +)*(?:func |init\(|deinit\b|var |let )'
+    message: "Leave a blank line between methods and subsequent member declarations."
+    severity: error
