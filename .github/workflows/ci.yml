@@ -1,0 +1,36 @@
+# Copyright © 2026 Vladimir Uvarov. All rights reserved.
+name: iOS quality
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  validate:
+    runs-on: macos-26
+    timeout-minutes: 20
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.2.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Install pinned SwiftLint
+        run: bash Scripts/install-swiftlint.sh "$RUNNER_TEMP/SwiftLint"
+      - name: Validate project references
+        run: python3 Scripts/validate-project.py
+      - name: Check formatting and source structure
+        env:
+          SWIFTLINT_BIN: ${{ runner.temp }}/SwiftLint/swiftlint
+        run: bash Scripts/lint.sh
+      - name: Run package tests
+        run: bash Scripts/test.sh
+      - name: Build and test iOS app
+        run: >-
+          xcodebuild test -project ApexArchive.xcodeproj -scheme ApexArchive
+          -configuration Debug -destination 'platform=iOS Simulator,name=iPhone 17'
+          -derivedDataPath "$RUNNER_TEMP/ApexArchiveBuild"
+          CODE_SIGNING_ALLOWED=NO
